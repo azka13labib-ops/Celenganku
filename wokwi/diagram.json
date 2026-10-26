@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "author": "Celenganku Pintar",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn500",
+      "top": -90,
+      "left": 180,
+      "attrs": { "color": "orange", "label": "Koin 500" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1000",
+      "top": -10,
+      "left": 180,
+      "attrs": { "color": "green", "label": "Koin 1000" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": 120,
+      "left": 180,
+      "attrs": { "volume": "0.2" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 200,
+      "left": 180,
+      "attrs": { "color": "cyan" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 240,
+      "left": 120,
+      "attrs": { "value": "220" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:18", "btn500:2.1", "orange", [ "h0" ] ],
+    [ "esp:GND.1", "btn500:1.1", "black", [ "v0" ] ],
+    [ "esp:19", "btn1000:2.1", "green", [ "h0" ] ],
+    [ "esp:GND.1", "btn1000:1.1", "black", [ "v0" ] ],
+    [ "esp:21", "bz1:2", "purple", [ "h0" ] ],
+    [ "esp:GND.2", "bz1:1", "black", [ "v0" ] ],
+    [ "esp:2", "r1:1", "cyan", [ "h0" ] ],
+    [ "r1:2", "led1:A", "cyan", [ "h0" ] ],
+    [ "esp:GND.2", "led1:C", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
