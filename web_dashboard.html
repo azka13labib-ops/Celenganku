@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celenganku Pintar IoT - Web Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0F766E;
+      --primary-light: #14B8A6;
+      --primary-dark: #115E59;
+      --amber: #D97706;
+      --amber-light: #FEF3C7;
+      --emerald: #16A34A;
+      --emerald-light: #DCFCE7;
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(15, 118, 110, 0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .brand-info h1 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--emerald-light);
+      border: 1px solid #86EFAC;
+      color: #15803D;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--emerald);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background: linear-gradient(135deg, #0F766E, #115E59);
+      color: white;
+      border-radius: 28px;
+      padding: 26px 24px;
+      box-shadow: 0 16px 32px rgba(15, 118, 110, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: '';
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      top: -30px;
+      right: -30px;
+    }
+
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .child-badge {
+      background: rgba(255, 255, 255, 0.16);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .hero-amount {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: baseline;
+      transition: transform 0.2s ease;
+    }
+
+    .hero-desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.4;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Setoran Terakhir Card */
+    .deposit-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .coin-badge {
+      width: 48px;
+      height: 48px;
+      background: var(--amber-light);
+      border: 1px solid #FDE68A;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .deposit-info {
+      flex: 1;
+    }
+
+    .deposit-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .deposit-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: #15803D;
+      margin-top: 2px;
+    }
+
+    .deposit-val.empty {
+      color: #94A3B8;
+      font-size: 14px;
+    }
+
+    .pill-badge {
+      background: var(--emerald-light);
+      color: #166534;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+
+    /* Target Tabungan Card */
+    .target-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .target-name {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .target-percent {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      border-radius: 8px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .target-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Simulator Section */
+    .simulator-card {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .sim-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .sim-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-solid {
+      background: var(--primary);
+      border: none;
+      color: white;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      background: #0F766E;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(120px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">🐷</div>
+        <div class="brand-info">
+          <h1>Celengan Pintar IoT</h1>
+          <p>Pemantau Tabungan Anak (Firebase Live)</p>
+        </div>
+      </div>
+      <div class="status-badge" id="connBadge">
+        <div class="status-dot"></div>
+        <span id="connText">Terhubung</span>
+      </div>
+    </header>
+
+    <!-- Hero Card Saldo -->
+    <section class="hero-card">
+      <div class="hero-header">
+        <span class="hero-label">TOTAL SALDO TERKINI</span>
+        <span class="child-badge" id="childBadge">Tabungan Azka</span>
+      </div>
+      <div class="hero-amount" id="saldoDisplay">Rp0</div>
+      <p class="hero-desc" id="heroDesc">Menghubungkan ke sensor celengan...</p>
+    </section>
+
+    <!-- Setoran Terakhir Card -->
+    <section class="card deposit-card">
+      <div class="coin-badge">🪙</div>
+      <div class="deposit-info">
+        <div class="deposit-title">Setoran Terakhir (ESP32)</div>
+        <div class="deposit-val empty" id="lastDepositDisplay">Belum ada koin masuk</div>
+      </div>
+      <div class="pill-badge" id="lastDepositTime">Siap</div>
+    </section>
+
+    <!-- Target Tabungan Card -->
+    <section class="card">
+      <div class="target-header">
+        <div class="target-name">
+          <span>🎯</span>
+          <span id="targetName">Sepeda Baru</span>
+        </div>
+        <div class="target-percent" id="targetPercent">0%</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="target-footer">
+        <span id="targetGoal">Target: Rp100.000</span>
+        <span id="targetRemaining">Kurang Rp100.000 lagi</span>
+      </div>
+    </section>
+
+    <!-- Simulator Button Tester -->
+    <section class="simulator-card">
+      <div class="sim-header">
+        <span>⚡</span>
+        <span>Tes Simulasi Sensor Koin (Wokwi & Firebase)</span>
+      </div>
+      <div class="sim-desc">
+        Klik tombol di bawah untuk menyimulasikan koin masuk ke Firebase secara langsung tanpa hardware:
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="kirimKoin(500)">
+          <span>+</span> Rp500
+        </button>
+        <button class="btn btn-solid" onclick="kirimKoin(1000)">
+          <span>+</span> Rp1.000
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">
+    <span>🎉</span>
+    <span id="toastMsg">Koin berhasil masuk!</span>
+  </div>
+
+  <script>
+    const FIREBASE_URL = 'https://celenganku-456f9-default-rtdb.asia-southeast1.firebasedatabase.app/celengan_01.json';
+
+    let currentSaldo = 0;
+    let targetNominal = 100000;
+    let targetNama = 'Sepeda Baru';
+    let namaAnak = 'Azka';
+
+    function formatRupiah(num) {
+      return 'Rp' + Number(num || 0).toLocaleString('id-ID');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function updateUI(data) {
+      if (!data) return;
+
+      const newSaldo = Number(data.saldo || 0);
+      const terakhirMasuk = Number(data.terakhir_masuk || 0);
+
+      // Check if saldo increased
+      if (newSaldo > currentSaldo && currentSaldo > 0) {
+        showToast(`Koin baru terdeteksi! Saldo bertambah menjadi ${formatRupiah(newSaldo)}`);
+      }
+      currentSaldo = newSaldo;
+
+      // Update Saldo
+      document.getElementById('saldoDisplay').innerText = formatRupiah(currentSaldo);
+      document.getElementById('heroDesc').innerText = currentSaldo > 0
+        ? 'Data otomatis tersinkron realtime dengan celengan fisik.'
+        : 'Belum ada saldo. Masukkan koin ke celengan untuk memulai!';
+
+      // Update Child & Target Info
+      if (data.info) {
+        namaAnak = data.info.nama_anak || 'Azka';
+        targetNama = data.info.target_nama || 'Sepeda Baru';
+        targetNominal = Number(data.info.target_nominal || 100000);
+
+        document.getElementById('childBadge').innerText = `Tabungan ${namaAnak}`;
+        document.getElementById('targetName').innerText = targetNama;
+        document.getElementById('targetGoal').innerText = `Target: ${formatRupiah(targetNominal)}`;
+      }
+
+      // Update Setoran Terakhir
+      const lastDepositEl = document.getElementById('lastDepositDisplay');
+      if (terakhirMasuk > 0) {
+        lastDepositEl.innerText = `+${formatRupiah(terakhirMasuk)}`;
+        lastDepositEl.classList.remove('empty');
+        document.getElementById('lastDepositTime').innerText = 'Baru Saja';
+      } else {
+        lastDepositEl.innerText = 'Belum ada koin masuk';
+        lastDepositEl.classList.add('empty');
+        document.getElementById('lastDepositTime').innerText = 'Siap';
+      }
+
+      // Update Target Progress
+      const pct = targetNominal > 0 ? Math.min(100, Math.round((currentSaldo / targetNominal) * 100)) : 0;
+      document.getElementById('targetPercent').innerText = `${pct}%`;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+
+      const sisa = targetNominal - currentSaldo;
+      document.getElementById('targetRemaining').innerText = sisa <= 0
+        ? '🎉 Target Tercapai!'
+        : `Kurang ${formatRupiah(sisa)} lagi`;
+    }
+
+    // Connect Server-Sent Events (SSE) Realtime Stream ke Firebase RTDB
+    function connectSSE() {
+      const connBadge = document.getElementById('connBadge');
+      const connText = document.getElementById('connText');
+
+      try {
+        const eventSource = new EventSource(FIREBASE_URL);
+
+        eventSource.addEventListener('put', function(e) {
+          try {
+            const parsed = JSON.parse(e.data);
+            if (parsed.path === '/') {
+              updateUI(parsed.data);
+            } else {
+              fetchData();
+            }
+          } catch(err) {
+            console.error('Error parse SSE:', err);
+          }
+        });
+
+        eventSource.addEventListener('patch', function() {
+          fetchData();
+        });
+
+        eventSource.onopen = function() {
+          connBadge.style.display = 'flex';
+          connText.innerText = 'Terhubung';
+        };
+
+        eventSource.onerror = function() {
+          // Fallback to polling
+          console.warn('SSE fallback to polling');
+        };
+      } catch (err) {
+        console.warn('Browser EventSource fallback:', err);
+      }
+    }
+
+    // Fetch snapshot
+    async function fetchData() {
+      try {
+        const res = await fetch(FIREBASE_URL);
+        if (res.ok) {
+          const data = await res.json();
+          updateUI(data);
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    }
+
+    // Kirim Atomic Increment ke Firebase
+    async function kirimKoin(nominal) {
+      try {
+        const payload = {
+          "saldo": { ".sv": { "increment": nominal } },
+          "terakhir_masuk": nominal
+        };
+
+        const res = await fetch(FIREBASE_URL, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          fetchData();
+          showToast(`Koin ${formatRupiah(nominal)} berhasil masuk!`);
+        }
+      } catch (err) {
+        alert('Gagal mengirim koin: ' + err.message);
+      }
+    }
+
+    // Start
+    fetchData();
+    connectSSE();
+    setInterval(fetchData, 3000); // Polling backup tiap 3 detik
+  </script>
+</body>
+</html>
