@@ -3,24 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Celenganku Pintar IoT - Web Dashboard</title>
+  <title>Celenganku Pintar IoT - Laptop & Desktop Controller</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #0F766E;
-      --primary-light: #14B8A6;
-      --primary-dark: #115E59;
-      --amber: #D97706;
-      --amber-light: #FEF3C7;
-      --emerald: #16A34A;
-      --emerald-light: #DCFCE7;
-      --bg: #F8FAFC;
+      --primary-forest: #064E3B;
+      --primary-sage: #0D9488;
+      --primary-dark: #042F2E;
+      --accent-brass: #D97706;
+      --accent-brass-light: #FEF3C7;
+      --accent-emerald: #10B981;
+      --accent-emerald-light: #D1FAE5;
+      --bg-warm: #F8FAFC;
       --card-bg: #FFFFFF;
-      --text: #0F172A;
+      --text-main: #0F172A;
       --text-muted: #64748B;
-      --border: #E2E8F0;
+      --border-subtle: #E2E8F0;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
     }
 
     * {
@@ -30,93 +32,154 @@
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-warm);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 24px 16px;
+      padding: 24px 32px;
     }
 
-    .container {
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    /* Header */
-    .app-header {
+    /* Top Navigation Bar */
+    .top-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 8px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto 24px auto;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .brand {
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary-forest), var(--primary-sage));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 6px 14px rgba(6, 78, 59, 0.2);
+    }
+
+    .brand-title h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--primary-forest);
+    }
+
+    .brand-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      background: rgba(15, 118, 110, 0.12);
-      border-radius: 50%;
+    .btn-toggle-notif {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-toggle-notif:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .btn-toggle-notif.active {
+      background: var(--accent-emerald-light);
+      border-color: var(--accent-emerald);
+      color: #065F46;
+    }
+
+    .badge-status {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .brand-info h1 {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
-
-    .brand-info p {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .status-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--emerald-light);
-      border: 1px solid #86EFAC;
-      color: #15803D;
-      padding: 6px 12px;
+      gap: 8px;
+      background: var(--accent-emerald-light);
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+      padding: 8px 16px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--emerald);
+      width: 9px;
+      height: 9px;
+      background: var(--accent-emerald);
       border-radius: 50%;
-      animation: pulse 1.5s infinite;
+      animation: pulse 1.6s infinite;
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 0.35; transform: scale(0.85); }
     }
 
-    /* Hero Card */
+    /* Main Desktop Grid */
+    .dashboard-grid {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Hero Saldo Card */
     .hero-card {
-      background: linear-gradient(135deg, #0F766E, #115E59);
-      color: white;
-      border-radius: 28px;
-      padding: 26px 24px;
-      box-shadow: 0 16px 32px rgba(15, 118, 110, 0.28);
+      background: linear-gradient(135deg, var(--primary-forest) 0%, #0F766E 100%);
+      color: #FFFFFF;
+      border-radius: 24px;
+      padding: 30px 28px;
+      box-shadow: 0 16px 36px rgba(6, 78, 59, 0.28);
       position: relative;
       overflow: hidden;
     }
@@ -124,240 +187,348 @@
     .hero-card::after {
       content: '';
       position: absolute;
-      width: 140px;
-      height: 140px;
+      width: 180px;
+      height: 180px;
       background: rgba(255, 255, 255, 0.06);
       border-radius: 50%;
-      top: -30px;
-      right: -30px;
+      top: -40px;
+      right: -40px;
+      pointer-events: none;
     }
 
-    .hero-header {
+    .hero-top {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
 
     .hero-label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
-      letter-spacing: 1.2px;
+      letter-spacing: 1.4px;
       color: rgba(255, 255, 255, 0.75);
     }
 
-    .child-badge {
+    .child-pill {
       background: rgba(255, 255, 255, 0.16);
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
     }
 
     .hero-amount {
-      font-size: 42px;
+      font-size: 46px;
       font-weight: 900;
-      letter-spacing: -1px;
-      margin-bottom: 12px;
+      letter-spacing: -1.2px;
+      margin-bottom: 14px;
       display: flex;
       align-items: baseline;
       transition: transform 0.2s ease;
     }
 
     .hero-desc {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.4;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.5;
     }
 
-    /* Cards */
-    .card {
-      background: var(--card-bg);
-      border-radius: 22px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
-
-    /* Setoran Terakhir Card */
-    .deposit-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .coin-badge {
-      width: 48px;
-      height: 48px;
-      background: var(--amber-light);
-      border: 1px solid #FDE68A;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
-
-    .deposit-info {
-      flex: 1;
-    }
-
-    .deposit-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .deposit-val {
-      font-size: 18px;
-      font-weight: 800;
-      color: #15803D;
-      margin-top: 2px;
-    }
-
-    .deposit-val.empty {
-      color: #94A3B8;
-      font-size: 14px;
-    }
-
-    .pill-badge {
-      background: var(--emerald-light);
-      color: #166534;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 12px;
-    }
-
-    /* Target Tabungan Card */
+    /* Target Tabungan */
     .target-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
-    .target-name {
-      font-size: 14px;
-      font-weight: 700;
+    .target-title {
+      font-size: 15px;
+      font-weight: 800;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .target-percent {
-      font-size: 14px;
+    .target-pct {
+      font-size: 16px;
       font-weight: 800;
-      color: var(--primary);
+      color: var(--primary-forest);
     }
 
     .progress-track {
-      width: 100%;
-      height: 10px;
-      background: var(--border);
+      background: #E2E8F0;
+      height: 12px;
       border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .progress-fill {
+      background: linear-gradient(90deg, var(--accent-emerald), var(--primary-sage));
       height: 100%;
-      background: var(--primary);
       width: 0%;
       border-radius: 8px;
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .target-footer {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-muted);
+      font-weight: 600;
     }
 
-    /* Simulator Section */
-    .simulator-card {
+    /* Setoran Terakhir Card */
+    .deposit-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .deposit-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      background: var(--accent-brass-light);
+      border: 1px solid #FDE68A;
+    }
+
+    .deposit-icon-box.kertas {
+      background: #E0E7FF;
+      border-color: #C7D2FE;
+    }
+
+    .deposit-details {
+      flex: 1;
+    }
+
+    .deposit-details .label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .deposit-details .value {
+      font-size: 22px;
+      font-weight: 900;
+      color: #065F46;
+      margin-top: 2px;
+    }
+
+    .deposit-details .value.empty {
+      color: #94A3B8;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .deposit-source-tag {
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
       background: #F1F5F9;
-      border: 1px solid #CBD5E1;
-      border-radius: 20px;
-      padding: 18px;
+      color: var(--text-main);
     }
 
-    .sim-header {
+    /* Hardware Remote Control Panel */
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 6px;
     }
 
-    .sim-desc {
-      font-size: 11px;
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .control-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 12px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+      transform: translateY(-2px);
+    }
+
+    .control-btn .icon {
+      font-size: 24px;
+    }
+
+    .control-btn.active-led {
+      background: #FEF3C7;
+      border-color: #F59E0B;
+      color: #B45309;
+    }
+
+    /* Simulator Panel */
+    .sim-group-label {
+      font-size: 12px;
+      font-weight: 700;
       color: var(--text-muted);
-      margin-bottom: 14px;
-      line-height: 1.4;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 12px 0 8px 0;
     }
 
     .btn-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
 
-    .btn {
-      flex: 1;
+    .btn-sim {
       padding: 12px;
-      border-radius: 14px;
-      font-family: inherit;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: #FFFFFF;
+      font-weight: 800;
       font-size: 13px;
-      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
 
-    .btn:active {
-      transform: scale(0.97);
+    .btn-sim:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
-    .btn-outline {
-      background: white;
-      border: 1.5px solid var(--primary);
-      color: var(--primary);
+    .btn-sim-coin {
+      background: var(--accent-brass-light);
+      border-color: #FCD34D;
+      color: #92400E;
     }
 
-    .btn-solid {
-      background: var(--primary);
-      border: none;
-      color: white;
+    .banknote-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
 
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      background: #0F766E;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 16px;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    .btn-note {
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-note:hover {
+      transform: translateY(-2px);
+    }
+
+    .note-2k  { background: #F1F5F9; border-color: #CBD5E1; color: #475569; }
+    .note-5k  { background: #FFEDD5; border-color: #FDBA74; color: #C2410C; }
+    .note-10k { background: #F3E8FF; border-color: #D8B4FE; color: #7E22CE; }
+    .note-20k { background: #DCFCE7; border-color: #86EFAC; color: #15803D; }
+    .note-50k { background: #DBEAFE; border-color: #93C5FD; color: #1D4ED8; }
+    .note-100k{ background: #FEE2E2; border-color: #FCA5A5; color: #B91C1C; }
+
+    /* Live Activity Log Table */
+    .history-card {
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: #F8FAFC;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .history-meta {
       display: flex;
       align-items: center;
       gap: 10px;
-      transform: translateY(120px);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 999;
     }
 
-    .toast.show {
+    .history-icon {
+      font-size: 18px;
+    }
+
+    .history-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .history-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .history-amount {
+      font-size: 14px;
+      font-weight: 800;
+      color: #065F46;
+    }
+
+    /* Floating Toast */
+    .toast-box {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #0F172A;
+      color: #FFFFFF;
+      padding: 14px 20px;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(140px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 9999;
+    }
+
+    .toast-box.show {
       transform: translateY(0);
       opacity: 1;
     }
@@ -365,235 +536,613 @@
 </head>
 <body>
 
-  <div class="container">
-    <!-- Header -->
-    <header class="app-header">
-      <div class="brand">
-        <div class="brand-icon">🐷</div>
-        <div class="brand-info">
-          <h1>Celengan Pintar IoT</h1>
-          <p>Pemantau Tabungan Anak (Firebase Live)</p>
-        </div>
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="brand-group">
+      <div class="brand-avatar">🪙</div>
+      <div class="brand-title">
+        <h1>Celengan Pintar IoT</h1>
+        <p>Laptop Web & Desktop Monitor Panel</p>
       </div>
-      <div class="status-badge" id="connBadge">
+    </div>
+    <div class="nav-actions">
+      <button class="btn-toggle-notif" id="btnNotif" onclick="requestNotificationPermission()">
+        <span>🔔</span>
+        <span id="notifStatusText">Aktifkan Notifikasi Desktop</span>
+      </button>
+      <div class="badge-status" id="badgeConn">
         <div class="status-dot"></div>
-        <span id="connText">Terhubung</span>
+        <span id="textConn">Terhubung ke Cloud</span>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- Hero Card Saldo -->
-    <section class="hero-card">
-      <div class="hero-header">
-        <span class="hero-label">TOTAL SALDO TERKINI</span>
-        <span class="child-badge" id="childBadge">Tabungan Azka</span>
-      </div>
-      <div class="hero-amount" id="saldoDisplay">Rp0</div>
-      <p class="hero-desc" id="heroDesc">Menghubungkan ke sensor celengan...</p>
-    </section>
+  <!-- Main Grid 2 Columns -->
+  <main class="dashboard-grid">
 
-    <!-- Setoran Terakhir Card -->
-    <section class="card deposit-card">
-      <div class="coin-badge">🪙</div>
-      <div class="deposit-info">
-        <div class="deposit-title">Setoran Terakhir (ESP32)</div>
-        <div class="deposit-val empty" id="lastDepositDisplay">Belum ada koin masuk</div>
-      </div>
-      <div class="pill-badge" id="lastDepositTime">Siap</div>
-    </section>
+    <!-- Kolom Kiri: Ringkasan & Kontrol Hardware -->
+    <div class="col">
 
-    <!-- Target Tabungan Card -->
-    <section class="card">
-      <div class="target-header">
-        <div class="target-name">
-          <span>🎯</span>
-          <span id="targetName">Sepeda Baru</span>
+      <!-- Hero Card Saldo -->
+      <section class="hero-card">
+        <div class="hero-top">
+          <span class="hero-label">TOTAL TABUNGAN AKTIF</span>
+          <span class="child-pill" id="childPill">Tabungan Azka</span>
         </div>
-        <div class="target-percent" id="targetPercent">0%</div>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <div class="target-footer">
-        <span id="targetGoal">Target: Rp100.000</span>
-        <span id="targetRemaining">Kurang Rp100.000 lagi</span>
-      </div>
-    </section>
+        <div class="hero-amount" id="dispSaldo">Rp0</div>
+        <p class="hero-desc" id="dispDesc">Menghubungkan ke sensor celengan fisik...</p>
+      </section>
 
-    <!-- Simulator Button Tester -->
-    <section class="simulator-card">
-      <div class="sim-header">
-        <span>⚡</span>
-        <span>Tes Simulasi Sensor Koin (Wokwi & Firebase)</span>
-      </div>
-      <div class="sim-desc">
-        Klik tombol di bawah untuk menyimulasikan koin masuk ke Firebase secara langsung tanpa hardware:
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="kirimKoin(500)">
-          <span>+</span> Rp500
-        </button>
-        <button class="btn btn-solid" onclick="kirimKoin(1000)">
-          <span>+</span> Rp1.000
-        </button>
-      </div>
-    </section>
-  </div>
+      <!-- Setoran Terakhir Card -->
+      <section class="card">
+        <div class="deposit-badge-row">
+          <div class="deposit-icon-box" id="depositIconBox">🪙</div>
+          <div class="deposit-details">
+            <div class="label">Setoran Terakhir Masuk</div>
+            <div class="value empty" id="dispLastDeposit">Menunggu setoran...</div>
+          </div>
+          <span class="deposit-source-tag" id="dispDepositTag">Sensor Siap</span>
+        </div>
+      </section>
 
-  <div class="toast" id="toast">
-    <span>🎉</span>
-    <span id="toastMsg">Koin berhasil masuk!</span>
+      <!-- Target Tabungan Card -->
+      <section class="card">
+        <div class="target-header">
+          <div class="target-title">
+            <span>🎯</span>
+            <span id="dispTargetNama">Sepeda Baru</span>
+          </div>
+          <div class="target-pct" id="dispTargetPct">0%</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="dispProgressFill"></div>
+        </div>
+        <div class="target-footer">
+          <span id="dispTargetNominal">Target: Rp100.000</span>
+          <span id="dispTargetSisa">Kurang Rp100.000 lagi</span>
+        </div>
+      </section>
+
+      <!-- Kontrol Hardware ESP32 dari Laptop -->
+      <section class="card">
+        <div class="section-title">
+          <span>🛠️</span>
+          <span>Remote Kontrol Hardware ESP32 (Dari Laptop)</span>
+        </div>
+        <div class="control-grid">
+          <button class="control-btn" onclick="triggerHardwareBuzzer()">
+            <span class="icon">🔊</span>
+            <span>Tes Buzzer</span>
+          </button>
+          <button class="control-btn" id="btnLed" onclick="toggleHardwareLed()">
+            <span class="icon">💡</span>
+            <span id="ledLabel">Saklar LED</span>
+          </button>
+          <button class="control-btn" onclick="triggerCelebrationReward()">
+            <span class="icon">🎺</span>
+            <span>Nada Perayaan</span>
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Kolom Kanan: Simulator Sensor & Live Transaksi -->
+    <div class="col">
+
+      <!-- Simulator Sensor Koin & Uang Kertas -->
+      <section class="card">
+        <div class="section-title">
+          <span>⚡</span>
+          <span>Simulator Sensor (Koin & Uang Kertas)</span>
+        </div>
+
+        <div class="sim-group-label">Koin Rupiah (Sensor Load Cell HX711)</div>
+        <div class="btn-row">
+          <button class="btn-sim btn-sim-coin" onclick="simulasiSetoran(500, 'koin_otomatis', 'Koin Rp 500')">
+            <span>🪙</span> +Rp 500
+          </button>
+          <button class="btn-sim btn-sim-coin" onclick="simulasiSetoran(1000, 'koin_otomatis', 'Koin Rp 1.000')">
+            <span>🪙</span> +Rp 1.000
+          </button>
+        </div>
+
+        <div class="sim-group-label">Uang Kertas Rupiah (Slot IR & Scanner Warna TCS34725)</div>
+        <div class="banknote-grid">
+          <button class="btn-note note-2k" onclick="simulasiSetoran(2000, 'kertas_otomatis', 'Abu-abu (Rp 2.000)')">
+            Rp 2.000
+          </button>
+          <button class="btn-note note-5k" onclick="simulasiSetoran(5000, 'kertas_otomatis', 'Cokelat (Rp 5.000)')">
+            Rp 5.000
+          </button>
+          <button class="btn-note note-10k" onclick="simulasiSetoran(10000, 'kertas_otomatis', 'Ungu (Rp 10.000)')">
+            Rp 10.000
+          </button>
+          <button class="btn-note note-20k" onclick="simulasiSetoran(20000, 'kertas_otomatis', 'Hijau (Rp 20.000)')">
+            Rp 20.000
+          </button>
+          <button class="btn-note note-50k" onclick="simulasiSetoran(50000, 'kertas_otomatis', 'Biru (Rp 50.000)')">
+            Rp 50.000
+          </button>
+          <button class="btn-note note-100k" onclick="simulasiSetoran(100000, 'kertas_otomatis', 'Merah (Rp 100.000)')">
+            Rp 100.000
+          </button>
+        </div>
+      </section>
+
+      <!-- Live Activity Log -->
+      <section class="card history-card">
+        <div class="section-title">
+          <span>📜</span>
+          <span>Aktivitas Setoran Terbaru</span>
+        </div>
+        <div class="history-list" id="historyList">
+          <div style="font-size: 13px; color: #94A3B8; text-align: center; padding: 20px;">
+            Memuat riwayat transaksi...
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Floating Toast Notification -->
+  <div class="toast-box" id="toastBox">
+    <span style="font-size: 22px;" id="toastIcon">🎉</span>
+    <span id="toastMsg">Uang berhasil ditambahkan!</span>
   </div>
 
   <script>
-    const FIREBASE_URL = 'https://celenganku-456f9-default-rtdb.asia-southeast1.firebasedatabase.app/celengan_01.json';
+    // -------------------------------------------------------------------------
+    // KONFIGURASI FIREBASE REALTIME DATABASE ENDPOINTS
+    // -------------------------------------------------------------------------
+    const FIREBASE_BASE = 'https://celenganku-456f9-default-rtdb.asia-southeast1.firebasedatabase.app';
+    const DEVICE_ID = 'celengan_01';
+    
+    // Menghubungkan ke root atau sub-node celengan
+    const URL_CELENGAN_NESTED = `${FIREBASE_BASE}/celengan/${DEVICE_ID}.json`;
+    const URL_CELENGAN_ROOT   = `${FIREBASE_BASE}/${DEVICE_ID}.json`;
+    const URL_FEEDBACK        = `${FIREBASE_BASE}/celengan/${DEVICE_ID}/feedback.json`;
 
+    let activeFirebaseUrl = URL_CELENGAN_NESTED;
     let currentSaldo = 0;
     let targetNominal = 100000;
     let targetNama = 'Sepeda Baru';
     let namaAnak = 'Azka';
+    let isLedActive = false;
+    let lastKnownTimestamp = 0;
 
+    // -------------------------------------------------------------------------
+    // WEB AUDIO SYNTHESIZER (Efek Suara Uang Masuk di Laptop)
+    // -------------------------------------------------------------------------
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Bunyi Koin Masuk (Ting logam ganda)
+    function playCoinChime() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(1975, now); // B6
+        gain1.gain.setValueAtTime(0.3, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.15);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(2637, now + 0.08); // E7
+        gain2.gain.setValueAtTime(0.3, now + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.08);
+        osc2.stop(now + 0.28);
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    // Bunyi Uang Kertas Masuk (Arpeggio lembut 4 nada)
+    function playBanknoteChime() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const notes = [1046, 1318, 1567, 2093]; // C6, E6, G6, C7
+
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const t = now + (idx * 0.07);
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.22);
+        });
+      } catch (e) {
+        console.warn('Audio play error:', e);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // DESKTOP WEB NOTIFICATIONS (Windows / Mac Toast)
+    // -------------------------------------------------------------------------
+    function requestNotificationPermission() {
+      if (!('Notification' in window)) {
+        alert('Browser ini tidak mendukung Desktop Notification.');
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        updateNotifButtonUI();
+        if (permission === 'granted') {
+          showToast('🔔 Notifikasi Desktop Windows Berhasil Diaktifkan!');
+          new Notification('Celenganku Pintar Aktif', {
+            body: 'Laptop Anda kini akan memunculkan pop-up saat uang koin atau kertas dimasukkan ke celengan.',
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🪙</text></svg>'
+          });
+        }
+      });
+    }
+
+    function updateNotifButtonUI() {
+      const btn = document.getElementById('btnNotif');
+      const text = document.getElementById('notifStatusText');
+      if (!('Notification' in window)) {
+        text.innerText = 'Notifikasi Tidak Didukung';
+        return;
+      }
+      if (Notification.permission === 'granted') {
+        btn.classList.add('active');
+        text.innerText = 'Notifikasi Desktop Aktif';
+      } else {
+        btn.classList.remove('active');
+        text.innerText = 'Aktifkan Notifikasi Desktop';
+      }
+    }
+
+    function triggerDesktopNotification(title, message) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, {
+          body: message,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💰</text></svg>'
+        });
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // FORMATTER & TOAST
+    // -------------------------------------------------------------------------
     function formatRupiah(num) {
-      return 'Rp' + Number(num || 0).toLocaleString('id-ID');
+      return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
+    function showToast(msg, icon = '🎉') {
+      const toast = document.getElementById('toastBox');
       document.getElementById('toastMsg').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    function updateUI(data) {
-      if (!data) return;
+    // -------------------------------------------------------------------------
+    // UPDATE UI ENGINE
+    // -------------------------------------------------------------------------
+    function updateUI(raw) {
+      if (!raw) return;
 
-      const newSaldo = Number(data.saldo || 0);
-      const terakhirMasuk = Number(data.terakhir_masuk || 0);
+      // Normalisasi struktur (baik nested data.* maupun root)
+      const dataNode = raw.data || raw;
+      const newSaldo = Number(dataNode.saldo || 0);
+      const terakhirMasuk = Number(dataNode.terakhir_masuk || 0);
 
-      // Check if saldo increased
+      // Deteksi adanya uang baru masuk
       if (newSaldo > currentSaldo && currentSaldo > 0) {
-        showToast(`Koin baru terdeteksi! Saldo bertambah menjadi ${formatRupiah(newSaldo)}`);
+        const selisih = newSaldo - currentSaldo;
+        if (selisih >= 2000) {
+          playBanknoteChime();
+          showToast(`Uang Kertas Masuk: +${formatRupiah(selisih)}!`, '💵');
+          triggerDesktopNotification('💵 Uang Kertas Masuk!', `Terdeteksi setoran baru sebesar ${formatRupiah(selisih)}. Saldo sekarang: ${formatRupiah(newSaldo)}.`);
+        } else {
+          playCoinChime();
+          showToast(`Koin Baru Masuk: +${formatRupiah(selisih)}!`, '🪙');
+          triggerDesktopNotification('🪙 Koin Masuk!', `Koin baru ${formatRupiah(selisih)} masuk ke celengan. Saldo sekarang: ${formatRupiah(newSaldo)}.`);
+        }
       }
       currentSaldo = newSaldo;
 
-      // Update Saldo
-      document.getElementById('saldoDisplay').innerText = formatRupiah(currentSaldo);
-      document.getElementById('heroDesc').innerText = currentSaldo > 0
-        ? 'Data otomatis tersinkron realtime dengan celengan fisik.'
-        : 'Belum ada saldo. Masukkan koin ke celengan untuk memulai!';
+      // Update Saldo Teks
+      document.getElementById('dispSaldo').innerText = formatRupiah(currentSaldo);
+      document.getElementById('dispDesc').innerText = currentSaldo > 0
+        ? 'Data otomatis tersinkron realtime dengan celengan fisik via Firebase WebSocket.'
+        : 'Belum ada saldo. Masukkan koin atau uang kertas untuk memulai!';
 
-      // Update Child & Target Info
-      if (data.info) {
-        namaAnak = data.info.nama_anak || 'Azka';
-        targetNama = data.info.target_nama || 'Sepeda Baru';
-        targetNominal = Number(data.info.target_nominal || 100000);
+      // Update Info Anak & Target
+      const infoNode = raw.info || (raw.data && raw.data.info) || {};
+      namaAnak = infoNode.nama_anak || 'Azka';
+      targetNama = infoNode.target_nama || 'Sepeda Baru';
+      targetNominal = Number(infoNode.target_nominal || 100000);
 
-        document.getElementById('childBadge').innerText = `Tabungan ${namaAnak}`;
-        document.getElementById('targetName').innerText = targetNama;
-        document.getElementById('targetGoal').innerText = `Target: ${formatRupiah(targetNominal)}`;
-      }
-
-      // Update Setoran Terakhir
-      const lastDepositEl = document.getElementById('lastDepositDisplay');
-      if (terakhirMasuk > 0) {
-        lastDepositEl.innerText = `+${formatRupiah(terakhirMasuk)}`;
-        lastDepositEl.classList.remove('empty');
-        document.getElementById('lastDepositTime').innerText = 'Baru Saja';
-      } else {
-        lastDepositEl.innerText = 'Belum ada koin masuk';
-        lastDepositEl.classList.add('empty');
-        document.getElementById('lastDepositTime').innerText = 'Siap';
-      }
+      document.getElementById('childPill').innerText = `Tabungan ${namaAnak}`;
+      document.getElementById('dispTargetNama').innerText = targetNama;
+      document.getElementById('dispTargetNominal').innerText = `Target: ${formatRupiah(targetNominal)}`;
 
       // Update Target Progress
       const pct = targetNominal > 0 ? Math.min(100, Math.round((currentSaldo / targetNominal) * 100)) : 0;
-      document.getElementById('targetPercent').innerText = `${pct}%`;
-      document.getElementById('progressFill').style.width = `${pct}%`;
+      document.getElementById('dispTargetPct').innerText = `${pct}%`;
+      document.getElementById('dispProgressFill').style.width = `${pct}%`;
 
       const sisa = targetNominal - currentSaldo;
-      document.getElementById('targetRemaining').innerText = sisa <= 0
+      document.getElementById('dispTargetSisa').innerText = sisa <= 0
         ? '🎉 Target Tercapai!'
         : `Kurang ${formatRupiah(sisa)} lagi`;
-    }
 
-    // Connect Server-Sent Events (SSE) Realtime Stream ke Firebase RTDB
-    function connectSSE() {
-      const connBadge = document.getElementById('connBadge');
-      const connText = document.getElementById('connText');
+      // Update Setoran Terakhir Card
+      const lastDepEl = document.getElementById('dispLastDeposit');
+      const lastIconBox = document.getElementById('depositIconBox');
+      const lastTag = document.getElementById('dispDepositTag');
 
-      try {
-        const eventSource = new EventSource(FIREBASE_URL);
-
-        eventSource.addEventListener('put', function(e) {
-          try {
-            const parsed = JSON.parse(e.data);
-            if (parsed.path === '/') {
-              updateUI(parsed.data);
-            } else {
-              fetchData();
-            }
-          } catch(err) {
-            console.error('Error parse SSE:', err);
-          }
-        });
-
-        eventSource.addEventListener('patch', function() {
-          fetchData();
-        });
-
-        eventSource.onopen = function() {
-          connBadge.style.display = 'flex';
-          connText.innerText = 'Terhubung';
-        };
-
-        eventSource.onerror = function() {
-          // Fallback to polling
-          console.warn('SSE fallback to polling');
-        };
-      } catch (err) {
-        console.warn('Browser EventSource fallback:', err);
-      }
-    }
-
-    // Fetch snapshot
-    async function fetchData() {
-      try {
-        const res = await fetch(FIREBASE_URL);
-        if (res.ok) {
-          const data = await res.json();
-          updateUI(data);
+      if (terakhirMasuk > 0) {
+        lastDepEl.innerText = `+${formatRupiah(terakhirMasuk)}`;
+        lastDepEl.classList.remove('empty');
+        if (terakhirMasuk >= 2000) {
+          lastIconBox.innerText = '💵';
+          lastIconBox.classList.add('kertas');
+          lastTag.innerText = 'Uang Kertas (Slot Feeder)';
+        } else {
+          lastIconBox.innerText = '🪙';
+          lastIconBox.classList.remove('kertas');
+          lastTag.innerText = 'Koin (Load Cell)';
         }
-      } catch (err) {
-        console.error('Fetch error:', err);
+      } else {
+        lastDepEl.innerText = 'Belum ada setoran';
+        lastDepEl.classList.add('empty');
+        lastIconBox.innerText = '🪙';
+        lastTag.innerText = 'Sensor Siap';
+      }
+
+      // Update Feedback state jika ada
+      if (raw.feedback) {
+        isLedActive = raw.feedback.led_status || false;
+        updateLedButtonState();
+      }
+
+      // Update Daftar Riwayat Transaksi
+      renderTransactionHistory(raw.transaksi || raw.riwayat);
+    }
+
+    function renderTransactionHistory(txData) {
+      const container = document.getElementById('historyList');
+      if (!txData || Object.keys(txData).length === 0) {
+        container.innerHTML = '<div style="font-size: 13px; color: #94A3B8; text-align: center; padding: 20px;">Belum ada riwayat setoran tercatat.</div>';
+        return;
+      }
+
+      const list = [];
+      Object.keys(txData).forEach(key => {
+        const item = txData[key];
+        list.push({
+          id: key,
+          nominal: Number(item.nominal || 0),
+          tipe: item.tipe || (item.nominal >= 2000 ? 'kertas_otomatis' : 'koin_otomatis'),
+          timestamp: item.timestamp || Date.now(),
+          warna: item.warna_deteksi || ''
+        });
+      });
+
+      // Urutkan dari yang paling baru
+      list.sort((a, b) => b.timestamp - a.timestamp);
+
+      let html = '';
+      list.slice(0, 10).forEach(tx => {
+        const isKertas = tx.nominal >= 2000 || tx.tipe === 'kertas_otomatis';
+        const icon = isKertas ? '💵' : '🪙';
+        const label = isKertas
+          ? (tx.warna ? `Uang Kertas (${tx.warna})` : 'Uang Kertas Rupiah')
+          : 'Setoran Koin Rupiah';
+        const timeStr = new Date(tx.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        html += `
+          <div class="history-item">
+            <div class="history-meta">
+              <span class="history-icon">${icon}</span>
+              <div>
+                <div class="history-name">${label}</div>
+                <div class="history-time">${timeStr} WIB</div>
+              </div>
+            </div>
+            <div class="history-amount">+${formatRupiah(tx.nominal)}</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function updateLedButtonState() {
+      const btn = document.getElementById('btnLed');
+      const label = document.getElementById('ledLabel');
+      if (isLedActive) {
+        btn.classList.add('active-led');
+        label.innerText = 'LED: Menyala';
+      } else {
+        btn.classList.remove('active-led');
+        label.innerText = 'LED: Padam';
       }
     }
 
-    // Kirim Atomic Increment ke Firebase
-    async function kirimKoin(nominal) {
+    // -------------------------------------------------------------------------
+    // KONTROL HARDWARE DARI LAPTOP (FIREBASE PATCH)
+    // -------------------------------------------------------------------------
+    async function triggerHardwareBuzzer() {
       try {
+        getAudioContext();
+        showToast('Mengirim sinyal bunyi ke Buzzer ESP32...', '🔊');
+        await fetch(URL_FEEDBACK, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ buzzer_active: true })
+        });
+      } catch (e) {
+        alert('Gagal mengirim sinyal ke Buzzer: ' + e.message);
+      }
+    }
+
+    async function toggleHardwareLed() {
+      try {
+        isLedActive = !isLedActive;
+        updateLedButtonState();
+        showToast(`Lampu LED di celengan diubah: ${isLedActive ? 'Menyala' : 'Padam'}`, '💡');
+        await fetch(URL_FEEDBACK, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ led_status: isLedActive })
+        });
+      } catch (e) {
+        alert('Gagal mengubah LED: ' + e.message);
+      }
+    }
+
+    async function triggerCelebrationReward() {
+      try {
+        getAudioContext();
+        playBanknoteChime();
+        showToast('Memainkan Nada Kemenangan di ESP32 & Laptop!', '🎺');
+        await fetch(URL_FEEDBACK, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reward_tone_trigger: Date.now() })
+        });
+      } catch (e) {
+        alert('Gagal mengirim sinyal perayaan: ' + e.message);
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // SIMULATOR SETORAN (KOIN & UANG KERTAS)
+    // -------------------------------------------------------------------------
+    async function simulasiSetoran(nominal, tipe, keterangan) {
+      try {
+        getAudioContext();
+        if (nominal >= 2000) {
+          playBanknoteChime();
+        } else {
+          playCoinChime();
+        }
+
+        const txKey = 'tx_' + Date.now();
         const payload = {
-          "saldo": { ".sv": { "increment": nominal } },
-          "terakhir_masuk": nominal
+          "data": {
+            "saldo": { ".sv": { "increment": nominal } },
+            "terakhir_masuk": nominal
+          },
+          "transaksi": {
+            [txKey]: {
+              "nominal": nominal,
+              "tipe": tipe,
+              "uid": "laptop_web_controller",
+              "warna_deteksi": keterangan,
+              "timestamp": Date.now()
+            }
+          }
         };
 
-        const res = await fetch(FIREBASE_URL, {
+        const res = await fetch(activeFirebaseUrl, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
         if (res.ok) {
-          fetchData();
-          showToast(`Koin ${formatRupiah(nominal)} berhasil masuk!`);
+          showToast(`Setoran ${keterangan} (${formatRupiah(nominal)}) berhasil!`, nominal >= 2000 ? '💵' : '🪙');
+          fetchSnapshot();
         }
-      } catch (err) {
-        alert('Gagal mengirim koin: ' + err.message);
+      } catch (e) {
+        alert('Gagal simulasi setoran: ' + e.message);
       }
     }
 
-    // Start
-    fetchData();
-    connectSSE();
-    setInterval(fetchData, 3000); // Polling backup tiap 3 detik
+    // -------------------------------------------------------------------------
+    // REALTIME SSE STREAM & SNAPSHOT
+    // -------------------------------------------------------------------------
+    function connectRealtimeSSE() {
+      try {
+        const es = new EventSource(activeFirebaseUrl);
+        es.addEventListener('put', function(e) {
+          try {
+            const parsed = JSON.parse(e.data);
+            if (parsed.path === '/') {
+              updateUI(parsed.data);
+            } else {
+              fetchSnapshot();
+            }
+          } catch(err) {
+            console.warn('SSE parse error:', err);
+          }
+        });
+
+        es.addEventListener('patch', function() {
+          fetchSnapshot();
+        });
+
+        es.onopen = function() {
+          document.getElementById('badgeConn').style.display = 'flex';
+          document.getElementById('textConn').innerText = 'Terhubung ke Cloud';
+        };
+
+        es.onerror = function() {
+          // SSE fallback
+        };
+      } catch(err) {
+        console.warn('EventSource error:', err);
+      }
+    }
+
+    async function fetchSnapshot() {
+      try {
+        // Coba url nested terlebih dahulu
+        let res = await fetch(activeFirebaseUrl);
+        if (res.ok) {
+          let data = await res.json();
+          if (!data && activeFirebaseUrl === URL_CELENGAN_NESTED) {
+            // Fallback ke root celengan_01 jika nested kosong
+            activeFirebaseUrl = URL_CELENGAN_ROOT;
+            res = await fetch(activeFirebaseUrl);
+            data = await res.json();
+          }
+          updateUI(data);
+        }
+      } catch (err) {
+        console.warn('Fetch error:', err);
+      }
+    }
+
+    // Inisialisasi awal
+    updateNotifButtonUI();
+    fetchSnapshot();
+    connectRealtimeSSE();
+    setInterval(fetchSnapshot, 2500); // Polling sinkronisasi tiap 2.5 detik
   </script>
 </body>
 </html>
