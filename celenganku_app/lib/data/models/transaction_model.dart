@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 enum TransactionType {
   koinOtomatis,
+  kertasOtomatis,
   setorManual,
   unknown;
 
@@ -9,6 +10,9 @@ enum TransactionType {
     switch (val) {
       case 'koin_otomatis':
         return TransactionType.koinOtomatis;
+      case 'kertas_otomatis':
+      case 'uang_kertas':
+        return TransactionType.kertasOtomatis;
       case 'setor_manual':
         return TransactionType.setorManual;
       default:
@@ -20,6 +24,8 @@ enum TransactionType {
     switch (this) {
       case TransactionType.koinOtomatis:
         return 'koin_otomatis';
+      case TransactionType.kertasOtomatis:
+        return 'kertas_otomatis';
       case TransactionType.setorManual:
         return 'setor_manual';
       case TransactionType.unknown:
@@ -34,6 +40,8 @@ class TransactionModel {
   final String uid;
   final TransactionType tipe;
   final double? beratGram;
+  final String? warnaDeteksi;
+  final double? panjangMm;
   final DateTime timestamp;
   final String? catatan;
 
@@ -43,6 +51,8 @@ class TransactionModel {
     required this.uid,
     required this.tipe,
     this.beratGram,
+    this.warnaDeteksi,
+    this.panjangMm,
     required this.timestamp,
     this.catatan,
   });
@@ -57,6 +67,10 @@ class TransactionModel {
     double? parsedBerat;
     final beratVal = map['berat_gram'];
     if (beratVal is num) parsedBerat = beratVal.toDouble();
+
+    double? parsedPanjang;
+    final panjangVal = map['panjang_mm'];
+    if (panjangVal is num) parsedPanjang = panjangVal.toDouble();
 
     DateTime parsedDate = DateTime.now();
     final tsVal = map['timestamp'];
@@ -75,6 +89,8 @@ class TransactionModel {
       uid: (map['uid'] ?? 'anon').toString(),
       tipe: TransactionType.fromString(map['tipe']?.toString()),
       beratGram: parsedBerat,
+      warnaDeteksi: map['warna_deteksi']?.toString(),
+      panjangMm: parsedPanjang,
       timestamp: parsedDate,
       catatan: map['catatan']?.toString(),
     );
@@ -86,10 +102,13 @@ class TransactionModel {
       'uid': uid,
       'tipe': tipe.toDbString(),
       if (beratGram != null) 'berat_gram': beratGram,
+      if (warnaDeteksi != null) 'warna_deteksi': warnaDeteksi,
+      if (panjangMm != null) 'panjang_mm': panjangMm,
       'timestamp': timestamp.millisecondsSinceEpoch,
       if (catatan != null) 'catatan': catatan,
     };
   }
+
 
   String get formattedNominal {
     final formatter = NumberFormat.currency(

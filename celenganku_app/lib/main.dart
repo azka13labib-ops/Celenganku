@@ -130,6 +130,7 @@ class DepositNotification {
   final int totalSaldo;
   final DateTime timestamp;
   final String namaAnak;
+  final bool isBanknote;
 
   const DepositNotification({
     required this.id,
@@ -137,7 +138,13 @@ class DepositNotification {
     required this.totalSaldo,
     required this.timestamp,
     required this.namaAnak,
+    this.isBanknote = false,
   });
+
+  String get title => isBanknote ? 'Uang Kertas Masuk!' : 'Koin Baru Masuk!';
+  String get subtitle => isBanknote
+      ? 'Uang kertas ${DashboardCelenganScreen.formatRupiah(nominal)} berhasil terverifikasi optik!'
+      : 'Koin ${DashboardCelenganScreen.formatRupiah(nominal)} terdeteksi sensor load cell!';
 }
 
 // ============================================================================
@@ -273,16 +280,23 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
     return controller.stream;
   }
 
-  /// Menampilkan Notifikasi Ketika User/Anak Menabung Koin
+  /// Menampilkan Notifikasi Ketika User/Anak Menabung Koin atau Uang Kertas
   void _triggerDepositNotification({
     required int nominal,
     required int totalSaldo,
     required String namaAnak,
+    bool? isBanknote,
   }) {
     if (nominal <= 0) return;
 
-    // Haptic feedback tactile (getaran mekanis saat koin masuk)
-    HapticFeedback.mediumImpact();
+    final banknote = isBanknote ?? (nominal >= 2000);
+
+    // Haptic feedback tactile (getaran mekanis koin vs tarikan uang kertas)
+    if (banknote) {
+      HapticFeedback.heavyImpact();
+    } else {
+      HapticFeedback.mediumImpact();
+    }
 
     final notif = DepositNotification(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -290,6 +304,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
       totalSaldo: totalSaldo,
       timestamp: DateTime.now(),
       namaAnak: namaAnak,
+      isBanknote: banknote,
     );
 
     setState(() {
@@ -321,7 +336,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
     });
   }
 
-  /// Deteksi Otomatis Koin Masuk dari Aliran Realtime
+  /// Deteksi Otomatis Setoran Masuk dari Aliran Realtime
   void _onDataReceived(CelenganSnapshot data) {
     if (_previousSaldo != null && data.saldo > _previousSaldo! && _previousSaldo! > 0) {
       final nominalMasuk = data.terakhirMasuk > 0
@@ -334,6 +349,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
             nominal: nominalMasuk,
             totalSaldo: data.saldo,
             namaAnak: data.namaAnak,
+            isBanknote: nominalMasuk >= 2000,
           );
         }
       });
@@ -983,11 +999,12 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
   }
 
   // --------------------------------------------------------------------------
-  // WIDGET KARTU SETORAN TERAKHIR
+  // WIDGET KARTU SETORAN TERAKHIR (KOIN ATAU UANG KERTAS)
   // --------------------------------------------------------------------------
   Widget _buildSetoranTerakhirCard(BuildContext context, CelenganSnapshot data) {
     final theme = Theme.of(context);
     final hasDeposit = data.terakhirMasuk > 0;
+    final isBanknote = data.terakhirMasuk >= 2000;
 
     return Container(
       width: double.infinity,
@@ -998,7 +1015,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -1010,14 +1027,16 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFFEF3C7),
+              color: isBanknote ? const Color(0xFFDCFCE7) : const Color(0xFFFEF3C7),
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFFDE68A)),
+              border: Border.all(
+                color: isBanknote ? const Color(0xFF86EFAC) : const Color(0xFFFDE68A),
+              ),
             ),
-            child: const Center(
+            child: Center(
               child: Icon(
-                Icons.monetization_on_rounded,
-                color: kCoinBrass,
+                isBanknote ? Icons.payments_rounded : Icons.monetization_on_rounded,
+                color: isBanknote ? const Color(0xFF16A34A) : kCoinBrass,
                 size: 26,
               ),
             ),
@@ -1028,7 +1047,9 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Setoran Terakhir (Sensor Fisik)',
+                  isBanknote
+                      ? 'Setoran Uang Kertas (Sensor Optik)'
+                      : 'Setoran Koin (Load Cell)',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF64748B),
                     fontWeight: FontWeight.w600,
@@ -1039,14 +1060,14 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
                   Text(
                     '+${DashboardCelenganScreen.formatRupiah(data.terakhirMasuk)}',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF15803D),
+                      color: isBanknote ? const Color(0xFF047857) : const Color(0xFF15803D),
                       fontWeight: FontWeight.w800,
                       fontSize: 18,
                     ),
                   )
                 else
                   Text(
-                    'Belum ada koin masuk hari ini',
+                    'Belum ada uang masuk hari ini',
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: const Color(0xFF94A3B8),
                       fontWeight: FontWeight.w600,
@@ -1058,13 +1079,17 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: hasDeposit ? const Color(0xFFDCFCE7) : const Color(0xFFF1F5F9),
+              color: hasDeposit
+                  ? (isBanknote ? const Color(0xFFDCFCE7) : const Color(0xFFFEF3C7))
+                  : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              hasDeposit ? 'Tercatat' : 'Siap',
+              hasDeposit ? (isBanknote ? 'Uang Kertas' : 'Koin') : 'Siap',
               style: TextStyle(
-                color: hasDeposit ? const Color(0xFF166534) : const Color(0xFF64748B),
+                color: hasDeposit
+                    ? (isBanknote ? const Color(0xFF166534) : const Color(0xFF92400E))
+                    : const Color(0xFF64748B),
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
               ),
@@ -1097,7 +1122,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -1192,7 +1217,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
   }
 
   // --------------------------------------------------------------------------
-  // SECTION SIMULASI SENSOR ESP32
+  // SECTION SIMULASI SENSOR ESP32 (KOIN & UANG KERTAS)
   // R-31: Tombol berukuran minimal 48px untuk aksesibilitas jempol di layar mobile.
   // --------------------------------------------------------------------------
   Widget _buildSimulasiSensorSection(BuildContext context) {
@@ -1213,7 +1238,7 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
               const Icon(Icons.sensors_rounded, color: kHeritageForest, size: 20),
               const SizedBox(width: 8),
               Text(
-                'Simulasi Sinyal Koin ESP32',
+                'Simulator Sensor Koin & Uang Kertas',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: kHeritageForest,
@@ -1223,44 +1248,102 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
           ),
           const SizedBox(height: 6),
           const Text(
-            'Tekan tombol di bawah untuk menguji respons notifikasi realtime aplikasi:',
+            'Uji simulasi sinyal koin (load cell) dan uang kertas (sensor warna optik TCS34725):',
             style: TextStyle(fontSize: 12, color: Color(0xFF475569)),
           ),
           const SizedBox(height: 14),
+
+          // Baris 1: Pilihan Koin
+          const Text(
+            'Koin Fisik (Load Cell):',
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: SizedBox(
-                  height: 48,
+                  height: 44,
                   child: OutlinedButton.icon(
                     onPressed: () => _kirimSimulasiKoin(500),
-                    icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
+                    icon: const Icon(Icons.add_circle_outline_rounded, size: 16),
                     label: const Text('+ Rp 500'),
                     style: OutlinedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: kHeritageForest,
                       side: const BorderSide(color: kHeritageForest, width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: SizedBox(
-                  height: 48,
+                  height: 44,
                   child: ElevatedButton.icon(
                     onPressed: () => _kirimSimulasiKoin(1000),
-                    icon: const Icon(Icons.monetization_on_rounded, size: 18),
+                    icon: const Icon(Icons.monetization_on_rounded, size: 16),
                     label: const Text('+ Rp 1.000'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kHeritageForest,
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Baris 2: Pilihan Uang Kertas Rupiah
+          const Text(
+            'Uang Kertas Rupiah (Sensor Warna & Feeder):',
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildBanknoteChip(
+                label: 'Rp 2.000 (Abu-abu)',
+                nominal: 2000,
+                color: const Color(0xFF475569),
+                warnaName: 'Abu-abu',
+              ),
+              _buildBanknoteChip(
+                label: 'Rp 5.000 (Cokelat)',
+                nominal: 5000,
+                color: const Color(0xFF92400E),
+                warnaName: 'Cokelat',
+              ),
+              _buildBanknoteChip(
+                label: 'Rp 10.000 (Ungu)',
+                nominal: 10000,
+                color: const Color(0xFF7E22CE),
+                warnaName: 'Ungu',
+              ),
+              _buildBanknoteChip(
+                label: 'Rp 20.000 (Hijau)',
+                nominal: 2000,
+                color: const Color(0xFF15803D),
+                warnaName: 'Hijau',
+              ),
+              _buildBanknoteChip(
+                label: 'Rp 50.000 (Biru)',
+                nominal: 50000,
+                color: const Color(0xFF1D4ED8),
+                warnaName: 'Biru',
+              ),
+              _buildBanknoteChip(
+                label: 'Rp 100.000 (Merah)',
+                nominal: 100000,
+                color: const Color(0xFFB91C1C),
+                warnaName: 'Merah',
               ),
             ],
           ),
@@ -1268,11 +1351,34 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
       ),
     );
   }
+
+  Widget _buildBanknoteChip({
+    required String label,
+    required int nominal,
+    required Color color,
+    required String warnaName,
+  }) {
+    return ActionChip(
+      avatar: const Icon(Icons.payments_rounded, size: 15, color: Colors.white),
+      label: Text(label),
+      labelStyle: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 11,
+      ),
+      backgroundColor: color,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      onPressed: () {
+        _kirimSimulasiKoin(nominal);
+      },
+    );
+  }
 }
 
 // ============================================================================
-// WIDGET FLOATING BANNER NOTIFIKASI MENABUNG
-// R-31: Memberikan umpan balik langsung ketika koin fisik masuk ke celengan.
+// WIDGET FLOATING BANNER NOTIFIKASI MENABUNG (KOIN & UANG KERTAS)
+// R-31: Memberikan umpan balik langsung ketika koin atau uang kertas masuk.
 // ============================================================================
 class _CoinDepositBanner extends StatelessWidget {
   final DepositNotification notification;
@@ -1285,6 +1391,8 @@ class _CoinDepositBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBanknote = notification.isBanknote;
+
     return Material(
       color: Colors.transparent,
       child: Container(
@@ -1294,24 +1402,33 @@ class _CoinDepositBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.18),
+              color: Colors.black.withValues(alpha: 0.18),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
           ],
-          border: Border.all(color: const Color(0xFF34D399).withOpacity(0.4), width: 1.2),
+          border: Border.all(
+            color: isBanknote
+                ? const Color(0xFF6EE7B7)
+                : const Color(0xFF34D399).withValues(alpha: 0.4),
+            width: 1.4,
+          ),
         ),
         child: Row(
           children: [
             Container(
               width: 44,
               height: 44,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFEF3C7),
+              decoration: BoxDecoration(
+                color: isBanknote ? const Color(0xFFDCFCE7) : const Color(0xFFFEF3C7),
                 shape: BoxShape.circle,
               ),
-              child: const Center(
-                child: Icon(Icons.savings_rounded, color: kCoinBrass, size: 24),
+              child: Center(
+                child: Icon(
+                  isBanknote ? Icons.payments_rounded : Icons.savings_rounded,
+                  color: isBanknote ? const Color(0xFF16A34A) : kCoinBrass,
+                  size: 24,
+                ),
               ),
             ),
             const SizedBox(width: 14),
@@ -1322,9 +1439,9 @@ class _CoinDepositBanner extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'Koin Baru Masuk!',
-                        style: TextStyle(
+                      Text(
+                        notification.title,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1334,13 +1451,13 @@ class _CoinDepositBanner extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.amber[400],
+                          color: isBanknote ? const Color(0xFF86EFAC) : Colors.amber[400],
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           '+${DashboardCelenganScreen.formatRupiah(notification.nominal)}',
-                          style: const TextStyle(
-                            color: Color(0xFF1E293B),
+                          style: TextStyle(
+                            color: isBanknote ? const Color(0xFF065F46) : const Color(0xFF1E293B),
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                           ),
@@ -1350,9 +1467,9 @@ class _CoinDepositBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    'Saldo kini ${DashboardCelenganScreen.formatRupiah(notification.totalSaldo)}. Terus semangat!',
+                    notification.subtitle,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.88),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 12,
                     ),
                   ),
@@ -1370,6 +1487,7 @@ class _CoinDepositBanner extends StatelessWidget {
     );
   }
 }
+
 
 // ============================================================================
 // ANIMASI ANGKA COUNTER HALUS
