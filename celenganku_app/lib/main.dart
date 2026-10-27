@@ -8,14 +8,17 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'core/config/firebase_config.dart';
+import 'presentation/analytics/analytics_screen.dart';
+import 'presentation/hardware_control/hardware_control_sheet.dart';
+import 'data/repositories/hardware_feedback_repository.dart';
 
 // ============================================================================
 // KONFIGURASI FIREBASE REALTIME DATABASE (ASIA-SOUTHEAST1)
 // ============================================================================
-const String kFirebaseProjectId = 'celenganku-456f9';
-const String kFirebaseDatabaseUrl =
-    'https://celenganku-456f9-default-rtdb.asia-southeast1.firebasedatabase.app';
-const String kNodePath = 'celengan_01';
+const String kFirebaseProjectId = FirebaseConfig.projectId;
+const String kFirebaseDatabaseUrl = FirebaseConfig.databaseUrl;
+const String kNodePath = FirebaseConfig.defaultCelenganId;
 
 // Palet Warna Anti AI Slop (Strict 3 Core + 1 Deliberate Accent)
 // R-31: Heritage Forest dipilih untuk melambangkan kestabilan dan tabungan riil.
@@ -27,27 +30,10 @@ const Color kDeepSlate = Color(0xFF0F172A);      // Slate 900 Text
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: 'AIzaSyDummyKeyForRealtimeDatabasePublicAccess456f9',
-          appId: '1:543210987654:android:celenganku456f9',
-          messagingSenderId: '543210987654',
-          projectId: kFirebaseProjectId,
-          databaseURL: kFirebaseDatabaseUrl,
-        ),
-      );
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      print('Info: Inisialisasi Firebase dialihkan ke HTTP SSE Engine: $e');
-    }
-  }
-
+  await FirebaseConfig.initializeOfflinePersistence();
   runApp(const CelenganApp());
 }
+
 
 // ============================================================================
 // ROOT APPLICATION WIDGET
@@ -685,7 +671,37 @@ class _DashboardCelenganScreenState extends State<DashboardCelenganScreen>
           ],
         ),
         actions: [
-          // Tombol Notifikasi Riwayat
+          // 1. Tombol Navigasi ke Layar Analitik & Grafik (fl_chart)
+          IconButton(
+            icon: const Icon(Icons.bar_chart_rounded, color: kDeepSlate),
+            tooltip: 'Tren & Analitik Tabungan',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AnalyticsScreen(),
+                ),
+              );
+            },
+          ),
+
+          // 2. Tombol Kontrol Perangkat Keras ESP32 (Buzzer & LED)
+          IconButton(
+            icon: const Icon(Icons.tune_rounded, color: kDeepSlate),
+            tooltip: 'Kontrol Perangkat Keras ESP32',
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => HardwareControlSheet(
+                  repository: HardwareFeedbackRepository(),
+                ),
+              );
+            },
+          ),
+
+          // 3. Tombol Notifikasi Riwayat
           Stack(
             children: [
               IconButton(

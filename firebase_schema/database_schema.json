@@ -1,0 +1,93 @@
+{
+  "celengan": {
+    "celengan_01": {
+      "metadata": {
+        "nama_celengan": "Tabungan Impian Keluarga Azka",
+        "deskripsi": "Patungan tabungan bersama orang tua dan anak",
+        "created_by": "uid_ayah_001",
+        "created_at": 1729000000000
+      },
+      "members": {
+        "uid_ayah_001": {
+          "email": "ayah@celenganku.id",
+          "display_name": "Ayah",
+          "role": "owner",
+          "joined_at": 1729000000000
+        },
+        "uid_ibu_002": {
+          "email": "ibu@celenganku.id",
+          "display_name": "Ibu",
+          "role": "contributor",
+          "joined_at": 1729050000000
+        },
+        "uid_anak_003": {
+          "email": "azka@celenganku.id",
+          "display_name": "Azka",
+          "role": "viewer",
+          "joined_at": 1729100000000
+        }
+      },
+      "data": {
+        "saldo": 345000,
+        "terakhir_masuk": 1000,
+        "berat_total_gram": 312.4
+      },
+      "info": {
+        "nama_anak": "Azka",
+        "target_nama": "Sepeda Lipat",
+        "target_nominal": 500000
+      },
+      "feedback": {
+        "buzzer_active": false,
+        "led_status": true,
+        "reward_tone_trigger": 0
+      },
+      "transaksi": {
+        "-O9A1_koin_001": {
+          "nominal": 1000,
+          "uid": "esp32_device_hw01",
+          "tipe": "koin_otomatis",
+          "berat_gram": 4.52,
+          "timestamp": 1729800000000
+        },
+        "-O9A2_koin_002": {
+          "nominal": 500,
+          "uid": "esp32_device_hw01",
+          "tipe": "koin_otomatis",
+          "berat_gram": 3.11,
+          "timestamp": 1729886400000
+        },
+        "-O9A3_setoran_manual": {
+          "nominal": 50000,
+          "uid": "uid_ayah_001",
+          "tipe": "setor_manual",
+          "catatan": "Uang saku sisa mingguan",
+          "timestamp": 1729972800000
+        }
+      }
+    }
+  },
+  "users": {
+    "uid_ayah_001": {
+      "email": "ayah@celenganku.id",
+      "display_name": "Ayah",
+      "celengan_list": {
+        "celengan_01": true
+      }
+    },
+    "uid_ibu_002": {
+      "email": "ibu@celenganku.id",
+      "display_name": "Ibu",
+      "celengan_list": {
+        "celengan_01": true
+      }
+    },
+    "uid_anak_003": {
+      "email": "azka@celenganku.id",
+      "display_name": "Azka",
+      "celengan_list": {
+        "celengan_01": true
+      }
+    }
+  }
+}

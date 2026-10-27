@@ -1,0 +1,64 @@
+{
+  "rules": {
+    "celengan": {
+      "$celengan_id": {
+        ".read": "auth != null && (root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid) || auth.token.device_id == $celengan_id || auth.token.admin === true)",
+        
+        ".write": "auth != null && root.child('celengan').child($celengan_id).child('members').child(auth.uid).child('role').val() === 'owner'",
+
+        "metadata": {
+          ".read": "auth != null && root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid)",
+          ".write": "auth != null && root.child('celengan').child($celengan_id).child('members').child(auth.uid).child('role').val() === 'owner'",
+          ".validate": "newData.hasChildren(['nama_celengan', 'created_by', 'created_at'])"
+        },
+
+        "members": {
+          ".read": "auth != null && data.hasChild(auth.uid)",
+          "$member_uid": {
+            ".write": "auth != null && (root.child('celengan').child($celengan_id).child('members').child(auth.uid).child('role').val() === 'owner' || auth.uid === $member_uid)",
+            ".validate": "newData.hasChildren(['role', 'joined_at']) && (newData.child('role').val() === 'owner' || newData.child('role').val() === 'contributor' || newData.child('role').val() === 'viewer')"
+          }
+        },
+
+        "data": {
+          ".read": "auth != null && (root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid) || auth.token.device_id == $celengan_id)",
+          ".write": "auth != null && (root.child('celengan').child($celengan_id).child('members').child(auth.uid).child('role').val() === 'owner' || root.child('celengan').child($celengan_id).child('members').child(auth.uid).child('role').val() === 'contributor' || auth.token.device_id == $celengan_id)",
+          "saldo": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "terakhir_masuk": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
+        },
+
+        "transaksi": {
+          ".read": "auth != null && root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid)",
+          "$transaksi_id": {
+            ".write": "auth != null && !data.exists() && newData.exists() && (root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid) || auth.token.device_id == $celengan_id)",
+            ".validate": "newData.hasChildren(['nominal', 'uid', 'timestamp', 'tipe']) && newData.child('nominal').isNumber() && newData.child('nominal').val() > 0"
+          }
+        },
+
+        "feedback": {
+          ".read": "auth != null && (root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid) || auth.token.device_id == $celengan_id)",
+          ".write": "auth != null && (root.child('celengan').child($celengan_id).child('members').hasChild(auth.uid) || auth.token.device_id == $celengan_id)",
+          "buzzer_active": { ".validate": "newData.isBoolean()" },
+          "led_status": { ".validate": "newData.isBoolean()" },
+          "reward_tone_trigger": { ".validate": "newData.isNumber()" }
+        }
+      }
+    },
+
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "celengan_list": {
+          "$celengan_id": {
+            ".validate": "newData.isBoolean()"
+          }
+        }
+      }
+    }
+  }
+}
